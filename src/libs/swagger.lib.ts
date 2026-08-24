@@ -2,7 +2,7 @@ import swaggerAutogen from 'swagger-autogen';
 
 const doc = {
     info: {
-        title: 'API de Estudiantes',
+        title: 'API Rest - RINCON DEL SABOR',
         description: 'Documentación automática generada para el bootcamp',
         version: '1.0.0',
     },

@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "API de Estudiantes",
+    "title": "API Rest - RINCON DEL SABOR",
     "description": "Documentación automática generada para el bootcamp",
     "version": "1.0.0"
   },
@@ -20,6 +20,19 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/menu": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
