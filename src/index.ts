@@ -2,18 +2,22 @@ import express, { type Request, type Response } from "express";
 import swaggerRouter from "./routes/swagger.router.js";
 import cors from "cors";
 import pool from "./config/db.js";
+import productoRouter from './routes/producto.router.js';
 
 const port = process.env.PORT;
 
 const app = express();
 
-// Middlewares 
+// Middlewar para autorización de conexión en la web con servidor
 app.use(cors())
+
+// Middlewar de validación de entradas Json
 app.use(express.json());
 
+// Middleware para documentación con Swagger
 app.use("/api/docs", swaggerRouter);
 
-
+// Endpoint para testeo de servidor backend
 app.get("/", (req: Request, res: Response) => {
     /*#swagger.tags = ['Tests']*/
     res.json({
@@ -22,21 +26,11 @@ app.get("/", (req: Request, res: Response) => {
     });
 });
 
-app.get('/api/menu', async (req: Request, res: Response) => {
-    try {
-        const result = await pool.query('SELECT * FROM producto');
-        if (result.rowCount === 0) {
-            console.log('No hay productos disponibles, por el momento.');
-            return res.status(200).json({ message: 'No hay productos disponibles' });
-        }
-        res.status(200).json(result.rows);
-    } catch (error) {
-        const msgError = error instanceof Error ? error.message : 'Error interno desconocido';
-        console.error('[ERROR/datos]', msgError);
-        res.status(500).json({ error: 'Error interno del Servidor' });
-    }
-})
+// Endpoints para 'Producto'
+app.use('/api/menu', productoRouter);
 
+console.clear();
+// Inicialización del servidor
 app.listen(port, async () => {
     console.log(`URL: http://localhost:${port}`);
     try {
@@ -48,3 +42,16 @@ app.listen(port, async () => {
         console.error('[ERROR/datos]', msgError);
     }
 });
+// Cierre correcto del servidor, para evitar conexiones colgadas
+// const shutdown = (async (signal: string) => {
+//     console.log(`\n[${signal}] Cerrando servidor...`);
+//     server.close(async () => {
+//         console.log('[HTTP] Conexiones HTTP cerradas');
+//         await pool.end();
+//         console.log('[DB] Pool cerrado correctamente');
+//         process.exit(0);
+//     })
+// });
+
+// process.on('SIGTERM', () => shutdown('SIGTERM'))
+// process.on('SIGINT', () => shutdown('SIGINT'))
