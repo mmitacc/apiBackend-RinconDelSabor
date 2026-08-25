@@ -24,7 +24,7 @@
         }
       }
     },
-    "/api/menu": {
+    "/api/menu/": {
       "get": {
         "description": "",
         "responses": {
@@ -33,6 +33,9 @@
           },
           "500": {
             "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         }
       }
