@@ -24,18 +24,224 @@
         }
       }
     },
-    "/api/menu/": {
+    "/api/menu": {
       "get": {
-        "description": "",
+        "tags": [
+          "Menu"
+        ],
+        "summary": "Obtener y filtrar todos los Productos del Menu",
+        "description": "Retorna la lista de productos permitiendo filtrar por nombre, PrecioMax o descripcion.",
+        "parameters": [
+          {
+            "name": "nombre",
+            "in": "query",
+            "description": "Filtro por nombre del producto",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "precio",
+            "in": "query",
+            "description": "Filtro por -precio maximo-",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "descripcion",
+            "in": "query",
+            "description": "Filtro por alguna palabra de la descripcion",
+            "required": false,
+            "type": "string"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
           },
           "503": {
             "description": "Service Unavailable"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Menu"
+        ],
+        "summary": "Crear un producto nuevo para el Menu",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Datos para el nuevo estudiante. Todos los datos son obligatorios.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombre": {
+                  "type": "string",
+                  "example": "Ceviche"
+                },
+                "precio": {
+                  "type": "number",
+                  "example": 20
+                },
+                "descripcion": {
+                  "type": "string",
+                  "example": "Pescado A1 en trozos con citricos, especias y cebolla"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/menu/{id}": {
+      "get": {
+        "tags": [
+          "Menu"
+        ],
+        "summary": "Obtener un Producto del Menu por ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID numérico del producto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Menu"
+        ],
+        "summary": "Actualizar algun dato de un Producto del Menu",
+        "description": "Modifica todos campos (nombre, precio, descripcion) de un Producto buscando por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "ID numérico del producto a actualizar"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campos que se desean actualizar. Puede actualizar uno o todos los campos del Producto",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombre": {
+                  "type": "string",
+                  "example": "Ceviche"
+                },
+                "precio": {
+                  "type": "number",
+                  "example": 20
+                },
+                "descripcion": {
+                  "type": "string",
+                  "example": "Pescado A1 en trozos con citricos, especias y cebolla"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Menu"
+        ],
+        "summary": "Eliminar un Producto del Menu por ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID numérico del producto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "{},{}...{}": {
+            "description": ""
           }
         }
       }
