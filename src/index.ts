@@ -27,11 +27,11 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Endpoints para 'Producto'
-app.use('/api/menu', productoRouter);
+app.use('/api', productoRouter);
 
 console.clear();
 // Inicialización del servidor
-app.listen(port, async () => {
+const server = app.listen(port, async () => {
     console.log(`URL: http://localhost:${port}`);
     try {
         const result = await pool.query('SELECT NOW()');
@@ -42,16 +42,17 @@ app.listen(port, async () => {
         console.error('[ERROR/datos]', msgError);
     }
 });
-// Cierre correcto del servidor, para evitar conexiones colgadas
-// const shutdown = (async (signal: string) => {
-//     console.log(`\n[${signal}] Cerrando servidor...`);
-//     server.close(async () => {
-//         console.log('[HTTP] Conexiones HTTP cerradas');
-//         await pool.end();
-//         console.log('[DB] Pool cerrado correctamente');
-//         process.exit(0);
-//     })
-// });
 
-// process.on('SIGTERM', () => shutdown('SIGTERM'))
-// process.on('SIGINT', () => shutdown('SIGINT'))
+// Cierre correcto del servidor, para evitar conexiones colgadas
+const shutdown = (async (signal: string) => {
+    console.log(`\n[${signal}] Cerrando servidor...`);
+    server.close(async () => {
+        console.log('[HTTP] Conexiones HTTP cerradas');
+        await pool.end();
+        console.log('[DB] Pool cerrado correctamente');
+        process.exit(0);
+    })
+});
+
+process.on('SIGTERM', () => shutdown('SIGTERM'))
+process.on('SIGINT', () => shutdown('SIGINT'))
