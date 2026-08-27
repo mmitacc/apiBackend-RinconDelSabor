@@ -1,13 +1,29 @@
 import { Router } from "express";
-import { getMenu, getProduct, createProduct, updateProduct, delProduct } from '../controllers/producto.controller.js';
+import {
+  getMenu,
+  getProduct,
+  createProduct,
+  updateProduct,
+  delProduct,
+} from "../controllers/producto.controller.js";
 import type { Request, Response, NextFunction } from "express";
-import { validarErrorPath, validarId } from "../middlewares/validalar.middleware.js";
+import { validarErrorPath } from "../middlewares/validalar.middleware.js";
+import {
+  validateBodySchema,
+  validateParamsSchema,
+} from "../middlewares/validateSchema.middleware.js";
+import idParamSchema from "../schemas/idParam.schema.js";
+import {
+  productoBodySchema,
+  productoPutSchema,
+  productoQuerySchema,
+} from "../schemas/producto.shema.js";
 
 const router: Router = Router();
 
 // Traer todos los productos
-router.get('/menu', (req: Request, res: Response) => {
-    /*  
+router.get("/menu", (req: Request, res: Response) => {
+  /*  
         #swagger.tags = ['Menu']
         #swagger.summary = 'Obtener y filtrar todos los Productos del Menu'
         #swagger.description = 'Retorna la lista de productos permitiendo filtrar por nombre, PrecioMax o descripcion.'
@@ -47,11 +63,14 @@ router.get('/menu', (req: Request, res: Response) => {
             }
         }
     */
-    getMenu(req, res);
+  getMenu(req, res);
 });
 
 // Traer el producto con ID
-router.get('/menu/:id', validarId, (req: Request, res: Response) => {
+router.get(
+  "/menu/:id",
+  validateParamsSchema(idParamSchema),
+  (req: Request, res: Response) => {
     /*
     #swagger.tags = ['Menu']
     #swagger.summary = 'Obtener un Producto del Menu por ID'
@@ -77,10 +96,14 @@ router.get('/menu/:id', validarId, (req: Request, res: Response) => {
     }
     */
     getProduct(req, res);
-});
+  },
+);
 
 // Crear un nuevo producto
-router.post('/menu', (req: Request, res: Response) => {
+router.post(
+  "/menu",
+  validateBodySchema(productoBodySchema),
+  (req: Request, res: Response) => {
     /*
     #swagger.tags = ['Menu']
     #swagger.summary = 'Crear un producto nuevo para el Menu'
@@ -110,10 +133,15 @@ router.post('/menu', (req: Request, res: Response) => {
     }
     */
     createProduct(req, res);
-});
+  },
+);
 
 // Actualizar un producto con ID
-router.put('/menu/:id', validarId, (req: Request, res: Response) => {
+router.put(
+  "/menu/:id",
+  validateParamsSchema(idParamSchema),
+  validateBodySchema(productoPutSchema),
+  (req: Request, res: Response) => {
     /*
     #swagger.tags = ['Menu']
     #swagger.summary = 'Actualizar algun dato de un Producto del Menu'
@@ -150,10 +178,14 @@ router.put('/menu/:id', validarId, (req: Request, res: Response) => {
     }
     */
     updateProduct(req, res);
-});
+  },
+);
 
 // Eliminar un producto con ID
-router.delete('/menu/:id', validarId, (req: Request, res: Response) => {
+router.delete(
+  "/menu/:id",
+  validateParamsSchema(idParamSchema),
+  (req: Request, res: Response) => {
     delProduct(req, res);
     /*
     #swagger.tags = ['Menu']
@@ -179,12 +211,16 @@ router.delete('/menu/:id', validarId, (req: Request, res: Response) => {
         }
     }
     */
-});
+  },
+);
 
 // Proteger de rutas no existentes para post
-router.post('/menu/*path', (req: Request, res: Response, next: NextFunction) => {
+router.post(
+  "/menu/*path",
+  (req: Request, res: Response, next: NextFunction) => {
     /* #swagger.ignore = true */
     validarErrorPath(req, res, next);
-});
+  },
+);
 
 export default router;
