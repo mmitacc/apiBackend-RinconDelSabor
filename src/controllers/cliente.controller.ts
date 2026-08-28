@@ -116,10 +116,10 @@ export const delCliente = async (req: Request, res: Response) => {
     const pedido_idCliente = await ClienteModel.getAllPedido_idCliente(id);
     if (pedido_idCliente.length !== 0) {
       console.log(
-        `Producto esta indexado con registros de otra tabla en la BD.`,
+        `Cliente esta indexado con registros de "pedido" en la BD.`,
       );
       return res.status(404).json({
-        "No se puede eliminar, esta indexado a": pedido_idCliente,
+        "No se puede eliminar, hay registros en <pedido>": pedido_idCliente,
       });
     }
     const result = await ClienteModel.deleteCliente(id);

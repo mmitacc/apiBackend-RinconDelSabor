@@ -4,6 +4,7 @@ import cors from "cors";
 import pool from "./config/db.js";
 import productoRouter from "./routes/producto.router.js";
 import clienteRouter from "./routes/cliente.router.js";
+import pedidoRouter from "./routes/pedido.router.js";
 import { initLoadTablesFieldsOfDB } from "./models/global.model.js";
 
 const port = process.env.PORT;
@@ -32,8 +33,10 @@ app.get("/", (req: Request, res: Response) => {
 app.use("/api/menu", productoRouter);
 // Endpoints para 'cliente'
 app.use("/api/cliente", clienteRouter);
+// Endpoints para 'pedido'
+app.use("/api/pedido", pedidoRouter);
 
-console.clear();
+// console.clear();
 // Inicialización del servidor
 const server = app.listen(port, async () => {
   console.log(`URL: http://localhost:${port}`);

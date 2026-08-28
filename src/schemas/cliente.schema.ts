@@ -24,8 +24,6 @@ export const clienteBodySchema = z.object({
     .max(20, "El telefono no puede superar los 20 caracteres"),
 });
 
-export const clienteQuerySchema = clienteBodySchema.partial();
-
 export const clientePutSchema = clienteBodySchema.partial().refine(
   (data) => {
     const camposEnviados = Object.values(data).filter((val) => {
