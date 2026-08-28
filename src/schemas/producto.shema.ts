@@ -15,7 +15,7 @@ export const productoBodySchema = z.object({
     .trim()
     .min(1, "La descripcion es obligatoria")
     .min(5, "La descripcion debe tener mínimo 5 caracteres")
-    .max(200, "La descripcion no puede superar los 100 caracteres"),
+    .max(200, "La descripcion no puede superar los 200 caracteres"),
 });
 
 export const productoQuerySchema = productoBodySchema.partial();

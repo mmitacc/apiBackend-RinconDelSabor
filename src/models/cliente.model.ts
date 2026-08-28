@@ -1,48 +1,48 @@
 import pool from "../config/db.js";
-import type { DetallePedido } from "./detallePedido.model.js";
 import { tablasDB } from "./global.model.js";
+import type { Pedido } from "./pedido.model.js";
 
 // Tipado de datos para 'producto'
-export interface Producto {
-  id_producto: number;
+export interface Cliente {
+  id_cliente: number;
   nombre: string;
-  precio: number;
-  descripcion: string;
+  email: string;
+  telefono: string;
 }
 
-export type ProductoTypeCreate = Omit<Producto, "id">;
+export type ClienteTypeCreate = Omit<Cliente, "id">;
 
-export type ProductoTypeUpdate = Partial<ProductoTypeCreate>;
+export type ClienteTypeUpdate = Partial<ClienteTypeCreate>;
 
 // Consultas a la BD solo por 'ProductoModel'
-export const ProductoModel = {
-  getAllProductos: async (): Promise<Producto[]> => {
-    const { rows } = await pool.query("SELECT * FROM producto");
+export const ClienteModel = {
+  getAllCliente: async (): Promise<Cliente[]> => {
+    const { rows } = await pool.query("SELECT * FROM cliente");
     return rows;
   },
-  getProductoById: async (id: number): Promise<Producto | null> => {
+  getClienteById: async (id: number): Promise<Cliente | null> => {
     const { rows } = await pool.query(
-      "SELECT * FROM producto WHERE id_producto = $1",
+      "SELECT * FROM cliente WHERE id_cliente = $1",
       [id],
     );
     return rows[0] || null;
   },
-  insertProducto: async (dato: ProductoTypeCreate): Promise<Producto> => {
-    const { nombre, precio, descripcion } = dato;
+  insertCliente: async (dato: ClienteTypeCreate): Promise<Cliente> => {
+    const { nombre, email, telefono } = dato;
     const query =
-      "INSERT INTO producto (nombre , precio , descripcion) VALUES ($1,$2,$3) RETURNING *";
-    const { rows } = await pool.query(query, [nombre, precio, descripcion]);
+      "INSERT INTO cliente (nombre , email , telefono) VALUES ($1,$2,$3) RETURNING *";
+    const { rows } = await pool.query(query, [nombre, email, telefono]);
     return rows[0];
   },
-  updateProducto: async (
+  updateCliente: async (
     id: number,
-    dato: ProductoTypeUpdate,
-  ): Promise<Producto | null> => {
+    dato: ClienteTypeUpdate,
+  ): Promise<Cliente | null> => {
     const campos = Object.keys(dato); // capturamos los campos que se estan actualizando
     // Limpiamos los campos de posibles scripts malisiosos
-    const camposProducto: string[] = tablasDB["producto"] ?? [];
+    const camposCliente: string[] = tablasDB["cliente"] ?? [];
     // const camposProducto = ["nombre", "precio", "descripcion"];
-    const camposLimpios = campos.filter((c) => camposProducto.includes(c));
+    const camposLimpios = campos.filter((c) => camposCliente.includes(c));
     // Evaluamos si existen campos ingresados para filtrar
     if (camposLimpios.length === 0) {
       throw new Error("No hay campos para actualizar!");
@@ -52,34 +52,32 @@ export const ProductoModel = {
     const setValues: unknown[] = [];
     camposLimpios.forEach((key, index) => {
       setClausula.push(`${key} = $${index + 1}`);
-      const secureKey = key as keyof ProductoTypeUpdate;
+      const secureKey = key as keyof ClienteTypeUpdate;
       setValues.push(dato[secureKey] ?? null);
     });
     // Y agregamos al final el id_libro
     setValues.push(id);
     // Ahora armamos el query completo para 'pool'
     const query = `
-        UPDATE producto
+        UPDATE cliente
         SET ${setClausula.join(", ")}
-        WHERE id_producto = $${setValues.length}
+        WHERE id_cliente = $${setValues.length}
         RETURNING *;
         `;
     // Hacemos la consulta
     const result = await pool.query(query, setValues);
     return result.rows[0] || null;
   },
-  deleteProducto: async (id: number): Promise<Producto | null> => {
+  deleteCliente: async (id: number): Promise<Cliente | null> => {
     const { rows } = await pool.query(
-      "DELETE FROM producto WHERE id_producto = $1 RETURNING *;",
+      "DELETE FROM cliente WHERE id_cliente = $1 RETURNING *;",
       [id],
     );
     return rows[0] || null;
   },
-  getAllDetallePedido_idProducto: async (
-    id: number,
-  ): Promise<DetallePedido[]> => {
+  getAllPedido_idCliente: async (id: number): Promise<Pedido[]> => {
     const result = await pool.query(
-      "SELECT * FROM detalle_pedido WHERE id_producto = $1;",
+      "SELECT * FROM pedido WHERE id_cliente = $1;",
       [id],
     );
     return result.rows;

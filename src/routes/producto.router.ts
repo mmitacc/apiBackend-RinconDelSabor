@@ -16,13 +16,12 @@ import idParamSchema from "../schemas/idParam.schema.js";
 import {
   productoBodySchema,
   productoPutSchema,
-  productoQuerySchema,
 } from "../schemas/producto.shema.js";
 
 const router: Router = Router();
 
 // Traer todos los productos
-router.get("/menu", (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
   /*  
         #swagger.tags = ['Menu']
         #swagger.summary = 'Obtener y filtrar todos los Productos del Menu'
@@ -47,15 +46,15 @@ router.get("/menu", (req: Request, res: Response) => {
             }
         #swagger.responses = {
             200: {
-                description: 'Estudiantes hallados correctamente.',
+                description: 'Productos de Menu hallados satisfactoriamente.',
                 schema: {
                     type: 'array',
-                    items: { $ref: '#/definitions/Estudiante' }
+                    items: { $ref: '#/definitions/Menu' }
                 }
             },  
             404: {
-                description: 'El estudiante solicitado no existe.',
-                schema: { error: 'El estudiante con el id = 99, no existe.' }
+                description: 'No hay productos en la BD',
+                schema: { error: 'No hay productos en la BD' }
             },
             500: {
                 description: 'Error interno del servidor.',
@@ -68,7 +67,7 @@ router.get("/menu", (req: Request, res: Response) => {
 
 // Traer el producto con ID
 router.get(
-  "/menu/:id",
+  "/:id",
   validateParamsSchema(idParamSchema),
   (req: Request, res: Response) => {
     /*
@@ -101,7 +100,7 @@ router.get(
 
 // Crear un nuevo producto
 router.post(
-  "/menu",
+  "/",
   validateBodySchema(productoBodySchema),
   (req: Request, res: Response) => {
     /*
@@ -109,7 +108,7 @@ router.post(
     #swagger.summary = 'Crear un producto nuevo para el Menu'
     #swagger.parameters['body'] = {
         in: 'body',
-        description: 'Datos para el nuevo estudiante. Todos los datos son obligatorios.',
+        description: 'Datos para el nuevo producto. Todos los datos son obligatorios.',
         required: true,
         schema: {
             nombre: 'Ceviche',
@@ -138,7 +137,7 @@ router.post(
 
 // Actualizar un producto con ID
 router.put(
-  "/menu/:id",
+  "/:id",
   validateParamsSchema(idParamSchema),
   validateBodySchema(productoPutSchema),
   (req: Request, res: Response) => {
@@ -183,7 +182,7 @@ router.put(
 
 // Eliminar un producto con ID
 router.delete(
-  "/menu/:id",
+  "/:id",
   validateParamsSchema(idParamSchema),
   (req: Request, res: Response) => {
     delProduct(req, res);
@@ -202,7 +201,7 @@ router.delete(
             schema: { id: 1, nombre: 'Ceviche', precio: 20, descripcion: 'Pescado A1 en trozos con citricos, especias y cebolla'}
         },
         404: {
-            description: 'Producto esta indexado con registros de otra tabla en la BD.',
+            description: 'Producto esta indexado con registros de tabla detalle_pedido en la BD.',
             schema: { error: 'No se puede eliminar, esta indexado a: [{},{}...{}].' }
         },
         500: {
@@ -215,12 +214,9 @@ router.delete(
 );
 
 // Proteger de rutas no existentes para post
-router.post(
-  "/menu/*path",
-  (req: Request, res: Response, next: NextFunction) => {
-    /* #swagger.ignore = true */
-    validarErrorPath(req, res, next);
-  },
-);
+router.post("/*path", (req: Request, res: Response, next: NextFunction) => {
+  /* #swagger.ignore = true */
+  validarErrorPath(req, res, next);
+});
 
 export default router;
