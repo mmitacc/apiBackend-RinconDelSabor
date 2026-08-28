@@ -24,7 +24,7 @@
         }
       }
     },
-    "/api/menu": {
+    "/api/menu/": {
       "get": {
         "tags": [
           "Menu"
@@ -79,7 +79,7 @@
           {
             "name": "body",
             "in": "body",
-            "description": "Datos para el nuevo estudiante. Todos los datos son obligatorios.",
+            "description": "Datos para el nuevo producto. Todos los datos son obligatorios.",
             "required": true,
             "schema": {
               "type": "object",
@@ -214,6 +214,228 @@
           "Menu"
         ],
         "summary": "Eliminar un Producto del Menu por ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID numérico del producto"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "{},{}...{}": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/cliente/": {
+      "get": {
+        "tags": [
+          "Cliente"
+        ],
+        "summary": "Obtener y filtrar todos los Clientes",
+        "description": "Retorna la lista de clientes permitiendo filtrar por nombre, email o telefono.",
+        "parameters": [
+          {
+            "name": "nombre",
+            "in": "query",
+            "description": "Filtro por nombre del producto",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Filtro por email",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "telefono",
+            "in": "query",
+            "description": "Filtro por alguna palabra de la descripcion",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cliente"
+        ],
+        "summary": "Crear un cliente nuevo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Datos para el nuevo cliente. Todos los datos son obligatorios.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombre": {
+                  "type": "string",
+                  "example": "Marck Bolaños"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "mbolannos@gmail.com"
+                },
+                "telefono": {
+                  "type": "string",
+                  "example": "+51 999123465"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/cliente/{id}": {
+      "get": {
+        "tags": [
+          "Cliente"
+        ],
+        "summary": "Obtener un cliente por ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID numérico del cliente"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Cliente"
+        ],
+        "summary": "Actualizar algun dato de un Cliente",
+        "description": "Modifica todos campos (nombre, email, telefono) de un Cliente buscando por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "ID numérico del producto a actualizar"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campos que se desean actualizar. Puede actualizar uno o todos los campos del Producto",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "nombre": {
+                  "type": "string",
+                  "example": "Marck Bolaños"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "mbolannos@gmail.com"
+                },
+                "telefono": {
+                  "type": "string",
+                  "example": "+51 999123465"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cliente"
+        ],
+        "summary": "Eliminar un Cliente por ID",
         "description": "",
         "parameters": [
           {

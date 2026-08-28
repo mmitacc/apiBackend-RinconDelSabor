@@ -1,15 +1,15 @@
 import type { Request, Response } from "express";
 import errorHandlerUtil from "../utils/errorHandlerUtil.js";
-import { ProductoModel } from "../models/producto.model.js";
+import { ClienteModel } from "../models/cliente.model.js";
 
-export const getMenu = async (req: Request, res: Response) => {
+export const getCliente = async (req: Request, res: Response) => {
   try {
-    const result = await ProductoModel.getAllProductos();
+    const result = await ClienteModel.getAllCliente();
     if (result.length === 0) {
-      console.log("No hay productos disponibles, por el momento.");
+      console.log("No hay clientes disponibles, por el momento.");
       return res
         .status(404)
-        .json({ message: "No hay productos disponibles en al BD." });
+        .json({ message: "No hay clientes disponibles en al BD." });
     }
     res.status(200).json({ all: result.length, data: result });
   } catch (error) {
@@ -30,14 +30,12 @@ export const getMenu = async (req: Request, res: Response) => {
   }
 };
 
-export const getProduct = async (req: Request, res: Response) => {
+export const getClienteId = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as any as number;
-    const result = await ProductoModel.getProductoById(id);
+    const result = await ClienteModel.getClienteById(id);
     if (result === null) {
-      return res
-        .status(404)
-        .json({ error: "Producto no encontrado en la BD." });
+      return res.status(404).json({ error: "Cliente no encontrado en la BD." });
     }
     res.status(200).json({ "Busqueda exitosa": result });
   } catch (error) {
@@ -58,16 +56,16 @@ export const getProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const createProduct = async (req: Request, res: Response) => {
+export const createCliente = async (req: Request, res: Response) => {
   try {
-    const result = await ProductoModel.insertProducto(req.body);
+    const result = await ClienteModel.insertCliente(req.body);
     if (!result) {
-      console.log(`No se pudo registrar el nuevo menu.`);
+      console.log(`No se pudo registrar el nuevo cliente.`);
       return res
         .status(404)
-        .json({ message: "No se pudo registrar el nuevo menu." });
+        .json({ message: "No se pudo registrar el nuevo cliente." });
     }
-    res.status(201).json({ "Registro de nuevo menu, exitoso": result });
+    res.status(201).json({ "Registro de nuevo cliente, exitoso": result });
   } catch (error) {
     if (error instanceof Error) {
       const esErrorQuery = errorHandlerUtil(error);
@@ -86,16 +84,14 @@ export const createProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const updateProduct = async (req: Request, res: Response) => {
+export const updateCliente = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as any as number;
-    const result = await ProductoModel.updateProducto(id, req.body);
+    const result = await ClienteModel.updateCliente(id, req.body);
     if (!result) {
-      return res
-        .status(404)
-        .json({ error: "Producto no encontrado en la BD." });
+      return res.status(404).json({ error: "Cliente no encontrado en la BD." });
     }
-    res.status(200).json({ "Producto actualizado, exitosamente": result });
+    res.status(200).json({ "Cliente actualizado, exitosamente": result });
   } catch (error) {
     if (error instanceof Error) {
       const esErrorQuery = errorHandlerUtil(error);
@@ -114,24 +110,21 @@ export const updateProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const delProduct = async (req: Request, res: Response) => {
+export const delCliente = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as any as number;
-    const detallePedido_idProducto =
-      await ProductoModel.getAllDetallePedido_idProducto(id);
-    if (detallePedido_idProducto.length !== 0) {
+    const pedido_idCliente = await ClienteModel.getAllPedido_idCliente(id);
+    if (pedido_idCliente.length !== 0) {
       console.log(
         `Producto esta indexado con registros de otra tabla en la BD.`,
       );
       return res.status(404).json({
-        "No se puede eliminar, esta indexado a": detallePedido_idProducto,
+        "No se puede eliminar, esta indexado a": pedido_idCliente,
       });
     }
-    const result = await ProductoModel.deleteProducto(id);
+    const result = await ClienteModel.deleteCliente(id);
     if (result === null) {
-      return res
-        .status(404)
-        .json({ error: "Producto no encontrado en la BD." });
+      return res.status(404).json({ error: "Cliente no encontrado en la BD." });
     }
     res.status(200).json({ "Eliminación exitosa": result });
   } catch (error) {
