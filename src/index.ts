@@ -36,7 +36,7 @@ app.use("/api/cliente", clienteRouter);
 // Endpoints para 'pedido'
 app.use("/api/pedido", pedidoRouter);
 
-// console.clear();
+console.clear();
 // Inicialización del servidor
 const server = app.listen(port, async () => {
   console.log(`URL: http://localhost:${port}`);

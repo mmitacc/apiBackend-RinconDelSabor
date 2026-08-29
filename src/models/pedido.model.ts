@@ -1,5 +1,9 @@
+import { time } from "node:console";
 import pool from "../config/db.js";
-import type { DetallePedido } from "./detallePedido.model.js";
+import type {
+  DetallePedido,
+  DetallePedidoTypeCreate,
+} from "./detallePedido.model.js";
 import { tablasDB } from "./global.model.js";
 
 // Tipado de datos para 'detalle-pedido'
@@ -13,6 +17,13 @@ export interface Pedido {
 export type PedidoTypeCreate = Omit<Pedido, "id_pedido">;
 
 export type PedidoTypeUpdate = Partial<PedidoTypeCreate>;
+
+// ==Insertar nuevo pedido extendido ==
+type DetallePedidoNewPedido = Omit<DetallePedidoTypeCreate, "id_pedido">;
+export interface PedidoCreateExtend {
+  id_cliente: number;
+  items: DetallePedidoNewPedido[];
+}
 
 // Consultas a la BD solo por 'PedidosModel'
 export const PedidoModel = {
@@ -52,6 +63,50 @@ WHERE pedido.id_cliente = $1
       "INSERT INTO pedido (fecha , id_cliente, estado) VALUES ($1,$2,$3) RETURNING *";
     const { rows } = await pool.query(query, [newfecha, id_cliente, newEstado]);
     return rows[0];
+  },
+  insertPedidoExtendt: async (
+    datoExtendt: PedidoCreateExtend,
+  ): Promise<DetallePedido[]> => {
+    // Creando una conexion dedicada
+    const dedicadaPool = await pool.connect();
+    try {
+      // Iniciado la conexion dedicada
+      await dedicadaPool.query("BEGIN");
+      // Consultas resguardadas por la conexión dedicada
+      const { id_cliente, items } = datoExtendt;
+      const queryPedido =
+        "INSERT INTO pedido (id_cliente) VALUES ($1) RETURNING *";
+      const { rows } = await dedicadaPool.query(queryPedido, [id_cliente]);
+      const idNewPedido = rows[0].id_pedido;
+      let values: number[] = [];
+      const elements: string[] = [];
+      items.forEach((item, index) => {
+        const n = 4 * index;
+        values = values.concat([
+          item.id_producto,
+          item.cantidad,
+          item.precio_unid,
+          idNewPedido,
+        ]);
+        elements.push(`($${n + 1}, $${n + 2}, $${n + 3}, $${n + 4})`);
+      });
+      const insertUnited =
+        elements.length > 0 ? `VALUES ${elements.join(", ")}` : "";
+      const queryDetallePedidos = `INSERT INTO detalle_pedido (id_producto, cantidad, precio_unid, id_pedido) ${insertUnited} RETURNING *`;
+      const result = await dedicadaPool.query(queryDetallePedidos, values);
+      return result.rows as DetallePedido[];
+    } catch (error) {
+      // Eliminando todas las transacciones en la conexion dedicada
+      await dedicadaPool.query("ROLLBACK");
+      console.error(
+        "Error en el registro de Pedido Extendido, se aplico ROLLBACK",
+        error,
+      );
+      throw error;
+    } finally {
+      // Cerrando la conexion dedicada
+      dedicadaPool.release();
+    }
   },
   updatePedido: async (
     id: number,

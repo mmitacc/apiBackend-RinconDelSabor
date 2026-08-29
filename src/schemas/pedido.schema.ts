@@ -1,4 +1,5 @@
 import { z } from "zod/v4";
+import { detallePedidoBodySchema } from "./detallePedido.schema.js";
 
 const isoDateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;
 
@@ -33,3 +34,17 @@ export const pedidoPutSchema = pedidoBodySchema.partial().refine(
   },
   { message: "Se debe ingresar al menos un campo para actualizar.", path: [] },
 );
+
+export const pedidoBodyDetallePedidos = z.object({
+  id_cliente: z
+    .number({
+      message: "El id_cliente es obligatorio y debe ser un número válido",
+    })
+    .nonnegative("El id_cliente no puede ser menor a cero")
+    .int("El id_cliente debe ser un número entero"),
+  items: z
+    .array(detallePedidoBodySchema, {
+      message: "items debe ser una lista de detalle_pedido",
+    })
+    .nonempty("En items debe contener al menos un detalle_pedido"),
+});

@@ -77,10 +77,10 @@ export const ProductoModel = {
       totalPage: Math.ceil(total / limit) || 1,
     };
   },
-  // getAllProductos: async (): Promise<Producto[]> => {
-  //   const { rows } = await pool.query("SELECT * FROM producto");
-  //   return rows;
-  // },
+  getAllProductos: async (): Promise<Producto[]> => {
+    const { rows } = await pool.query("SELECT * FROM producto");
+    return rows;
+  },
   getProductoById: async (id: number): Promise<Producto | null> => {
     const { rows } = await pool.query(
       "SELECT * FROM producto WHERE id_producto = $1",
