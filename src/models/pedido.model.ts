@@ -17,15 +17,32 @@ export type PedidoTypeUpdate = Partial<PedidoTypeCreate>;
 // Consultas a la BD solo por 'PedidosModel'
 export const PedidoModel = {
   getAllPedidos: async (): Promise<Pedido[]> => {
-    const { rows } = await pool.query("SELECT * FROM pedido");
+    const { rows } = await pool.query(`
+SELECT id_pedido, fecha, estado, pedido.id_cliente, nombre  FROM pedido
+INNER JOIN cliente ON pedido.id_cliente = cliente.id_cliente`);
     return rows;
   },
   getPedidoById: async (id: number): Promise<Pedido | null> => {
     const { rows } = await pool.query(
-      "SELECT * FROM pedido WHERE id_pedido = $1",
+      `
+SELECT id_pedido, fecha, estado, pedido.id_cliente, nombre  FROM pedido
+INNER JOIN cliente ON pedido.id_cliente = cliente.id_cliente
+WHERE id_pedido = $1
+      `,
       [id],
     );
     return rows[0] || null;
+  },
+  getPedidoById_cliente: async (id: number): Promise<Pedido[]> => {
+    const { rows } = await pool.query(
+      `
+SELECT id_pedido, fecha, estado, pedido.id_cliente, nombre  FROM pedido
+INNER JOIN cliente ON pedido.id_cliente = cliente.id_cliente
+WHERE pedido.id_cliente = $1
+      `,
+      [id],
+    );
+    return rows;
   },
   insertPedido: async (dato: PedidoTypeCreate): Promise<Pedido> => {
     const { fecha, id_cliente, estado } = dato;

@@ -5,6 +5,7 @@ import {
   createPedido,
   updatePedidoId,
   delPedido,
+  getPedidosId_cliente,
 } from "../controllers/pedido.controller.js";
 import type { Request, Response, NextFunction } from "express";
 import { validarErrorPath } from "../middlewares/validalar.middleware.js";
@@ -22,19 +23,7 @@ router.get("/", (req: Request, res: Response) => {
   /*  
         #swagger.tags = ['Pedido']
         #swagger.summary = 'Obtener y filtrar todos los Pedidos'
-        #swagger.description = 'Retorna la lista de pedidos permitiendo filtrar por fecha y id_cliente'
-        #swagger.parameters['fecha'] = {
-            in: 'query',
-            description: 'Filtro por fecha del pedido',
-            required: false,
-            type: 'string'
-        }
-        #swagger.parameters['id_cliente'] = {
-            in: 'query',
-            description: 'Filtro por id_cliente',
-            required: false,
-            type: 'number'
-        }
+        #swagger.description = 'Retorna la lista de pedidos incluido el nombre del cliente'
         #swagger.responses = {
             200: {
                 description: 'Pedidos hallados satisfactoriamente.',
@@ -73,7 +62,7 @@ router.get(
     #swagger.responses = {
         200: {
             description: 'Busqueda exitosa',
-            schema: { id: 1, fecha: '2026-08-27T20:15:00.000Z', id_cliente: 20, estado: "Completado"}}
+            schema: { id: 1, fecha: '2026-08-27T20:15:00.000Z', id_cliente: 20, estado: "Completado", nombre: 'Juan Perez'}}
         },
         404: {
             description: 'No hay Pedidos con id = 999',
@@ -86,6 +75,39 @@ router.get(
     }
     */
     getPedidosId(req, res);
+  },
+);
+
+// Traer el pedido con ID
+router.get(
+  "/cliente/:id",
+  validateParamsSchema(idParamSchema),
+  (req: Request, res: Response) => {
+    /*
+    #swagger.tags = ['Pedido']
+    #swagger.summary = 'Obtener todos los Pedidos de un cliente por ID_cliente'
+    #swagger.parameters['id'] = {
+    in: 'path',
+    description: 'ID numérico del Cliente',
+    required: true,
+    type: 'integer'
+    }
+    #swagger.responses = {
+        200: {
+            description: 'Busqueda exitosa',
+            schema: { id: 1, fecha: '2026-08-27T20:15:00.000Z', id_cliente: 20, estado: "Completado", nombre: 'Juan Perez'}}
+        },
+        404: {
+            description: 'No hay Pedidos con id = 999',
+            schema: { error: 'Pedido no encontrado en la BD.' }
+        },
+        500: {
+            description: 'Error interno del servidor.',
+            schema: { error: 'Mensaje de error específico' }
+        }
+    }
+    */
+    getPedidosId_cliente(req, res);
   },
 );
 

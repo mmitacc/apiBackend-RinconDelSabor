@@ -30,8 +30,22 @@
           "Menu"
         ],
         "summary": "Obtener y filtrar todos los Productos del Menu",
-        "description": "Retorna la lista de productos permitiendo filtrar por nombre, PrecioMax o descripcion.",
+        "description": "Retorna la lista de productos permitiendo filtrar por nombre, minPrecio y/o maxPrecio",
         "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Define el número límite máximo de productos a mostrar, por defecto es 10",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Define el número de página de productos filtrados a mostrar, por defecto es 1",
+            "required": false,
+            "type": "string"
+          },
           {
             "name": "nombre",
             "in": "query",
@@ -40,26 +54,23 @@
             "type": "string"
           },
           {
-            "name": "precio",
+            "name": "minPrecio",
             "in": "query",
-            "description": "Filtro por -precio maximo-",
+            "description": "Filtro para productos que sean mayores a minPrecio",
             "required": false,
             "type": "number"
           },
           {
-            "name": "descripcion",
+            "name": "maxPrecio",
             "in": "query",
-            "description": "Filtro por alguna palabra de la descripcion",
+            "description": "Filtro para productos que sean menores a maxPrecio",
             "required": false,
-            "type": "string"
+            "type": "number"
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -252,30 +263,7 @@
           "Cliente"
         ],
         "summary": "Obtener y filtrar todos los Clientes",
-        "description": "Retorna la lista de clientes permitiendo filtrar por nombre, email o telefono.",
-        "parameters": [
-          {
-            "name": "nombre",
-            "in": "query",
-            "description": "Filtro por nombre del producto",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "email",
-            "in": "query",
-            "description": "Filtro por email",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "telefono",
-            "in": "query",
-            "description": "Filtro por alguna palabra de la descripcion",
-            "required": false,
-            "type": "string"
-          }
-        ],
+        "description": "Retorna toda la lista de clientes con sus campos: nombre, email o telefono.",
         "responses": {
           "200": {
             "description": "OK"
@@ -464,6 +452,240 @@
           },
           "{},{}...{}": {
             "description": ""
+          }
+        }
+      }
+    },
+    "/api/pedido/": {
+      "get": {
+        "tags": [
+          "Pedido"
+        ],
+        "summary": "Obtener y filtrar todos los Pedidos",
+        "description": "Retorna la lista de pedidos incluido el nombre del cliente",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pedido"
+        ],
+        "summary": "Crear un Pedido nuevo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Datos para el nuevo Pedido. Solo el id_cliente es obligatorio.",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fecha": {
+                  "type": "string",
+                  "example": "2026-08-27T20:15:00.000Z"
+                },
+                "id_cliente": {
+                  "type": "number",
+                  "example": 20
+                },
+                "estado": {
+                  "type": "string",
+                  "example": "Completado"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      }
+    },
+    "/api/pedido/{id}": {
+      "get": {
+        "tags": [
+          "Pedido"
+        ],
+        "summary": "Obtener un Pedido por ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID numérico del Pedido"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Pedido"
+        ],
+        "summary": "Actualizar algun dato de un Pedido",
+        "description": "Modifica algun campo (fecha, id_cliente) de un Pedido buscando por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "number",
+            "description": "ID numérico del Pedido a actualizar"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "description": "Campos que se desean actualizar. Puede actualizar uno o todos los campos del Pedido",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "fecha": {
+                  "type": "string",
+                  "example": "2026-08-27T20:15:00.000Z"
+                },
+                "id_cliente": {
+                  "type": "number",
+                  "example": 20
+                },
+                "estado": {
+                  "type": "string",
+                  "example": "Completado"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Pedido"
+        ],
+        "summary": "Eliminar un Pedido por ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID numérico del Pedido"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
+          },
+          "{},{}...{}": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/pedido/cliente/{id}": {
+      "get": {
+        "tags": [
+          "Pedido"
+        ],
+        "summary": "Obtener todos los Pedidos de un cliente por ID_cliente",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "description": "ID numérico del Cliente"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "503": {
+            "description": "Service Unavailable"
           }
         }
       }

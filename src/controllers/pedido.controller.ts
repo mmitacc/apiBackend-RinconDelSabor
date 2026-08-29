@@ -57,18 +57,45 @@ export const getPedidosId = async (req: Request, res: Response) => {
   }
 };
 
+export const getPedidosId_cliente = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as any as number;
+    const result = await PedidoModel.getPedidoById_cliente(id);
+    if (result.length === 0) {
+      console.log("No hay pedidos para ese cliente, por el momento.");
+      return res.status(404).json({
+        message: "No hay pedidos disponibles para el cliente en al BD.",
+      });
+    }
+    res.status(200).json({ all: result.length, data: result });
+  } catch (error) {
+    if (error instanceof Error) {
+      const esErrorQuery = errorHandlerUtil(error);
+      // Error en la consulta: dato, sintaxis, etc
+      if (esErrorQuery) {
+        return res.status(500).json({ error: "Error interno del Servidor" });
+      } else {
+        // Error de conexion a la base de datos
+        return res
+          .status(503)
+          .json({ error: "Servicio temporalmente no disponible" });
+      }
+    }
+    res.status(500).json({ error: "Error desconocido en el servidor" });
+    throw error;
+  }
+};
+
 export const createPedido = async (req: Request, res: Response) => {
   try {
     const id = Number(req.body.id_cliente);
     const existeId_cliente = await ClienteModel.getClienteById(id);
     if (!existeId_cliente) {
       console.log(`id_cliente no existe en "cliente" de la BD.`);
-      return res
-        .status(404)
-        .json({
-          error:
-            "No se puede crear el pedido, cliente no existe en  <cliente> de la BD",
-        });
+      return res.status(404).json({
+        error:
+          "No se puede crear el pedido, cliente no existe en  <cliente> de la BD",
+      });
     }
     const result = await PedidoModel.insertPedido(req.body);
     if (!result) {
