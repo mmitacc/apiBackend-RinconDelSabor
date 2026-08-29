@@ -2,7 +2,7 @@ import pool from "../config/db.js";
 import { tablasDB } from "./global.model.js";
 import type { Pedido } from "./pedido.model.js";
 
-// Tipado de datos para 'producto'
+// Tipado de datos para 'cliente'
 export interface Cliente {
   id_cliente: number;
   nombre: string;
@@ -14,7 +14,7 @@ export type ClienteTypeCreate = Omit<Cliente, "id">;
 
 export type ClienteTypeUpdate = Partial<ClienteTypeCreate>;
 
-// Consultas a la BD solo por 'ProductoModel'
+// Consultas a la BD solo por 'ClienteModel'
 export const ClienteModel = {
   getAllCliente: async (): Promise<Cliente[]> => {
     const { rows } = await pool.query("SELECT * FROM cliente");
@@ -55,7 +55,7 @@ export const ClienteModel = {
       const secureKey = key as keyof ClienteTypeUpdate;
       setValues.push(dato[secureKey] ?? null);
     });
-    // Y agregamos al final el id_libro
+    // Y agregamos al final el id_cliente
     setValues.push(id);
     // Ahora armamos el query completo para 'pool'
     const query = `

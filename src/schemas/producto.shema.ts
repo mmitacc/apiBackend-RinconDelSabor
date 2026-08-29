@@ -18,8 +18,6 @@ export const productoBodySchema = z.object({
     .max(200, "La descripcion no puede superar los 200 caracteres"),
 });
 
-export const productoQuerySchema = productoBodySchema.partial();
-
 export const productoPutSchema = productoBodySchema.partial().refine(
   (data) => {
     const camposEnviados = Object.values(data).filter((val) => {

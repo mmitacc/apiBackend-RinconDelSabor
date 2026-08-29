@@ -25,25 +25,37 @@ router.get("/", (req: Request, res: Response) => {
   /*  
         #swagger.tags = ['Menu']
         #swagger.summary = 'Obtener y filtrar todos los Productos del Menu'
-        #swagger.description = 'Retorna la lista de productos permitiendo filtrar por nombre, PrecioMax o descripcion.'
+        #swagger.description = 'Retorna la lista de productos permitiendo filtrar por nombre, minPrecio y/o maxPrecio'
+        #swagger.parameters['limit'] = {
+            in: 'query',
+            description: 'Define el número límite máximo de productos a mostrar, por defecto es 10',
+            required: false,
+            type: 'string'
+        }     
+        #swagger.parameters['page'] = {
+            in: 'query',
+            description: 'Define el número de página de productos filtrados a mostrar, por defecto es 1',
+            required: false,
+            type: 'string'
+        }                   
         #swagger.parameters['nombre'] = {
-                in: 'query',
-                description: 'Filtro por nombre del producto',
-                required: false,
-                type: 'string'
-            }
-            #swagger.parameters['precio'] = {
-                in: 'query',
-                description: 'Filtro por -precio maximo-',
-                required: false,
-                type: 'number'
-            }
-            #swagger.parameters['descripcion'] = {
-                in: 'query',
-                description: 'Filtro por alguna palabra de la descripcion',
-                required: false,
-                type: 'string'
-            }
+            in: 'query',
+            description: 'Filtro por nombre del producto',
+            required: false,
+            type: 'string'
+        }
+        #swagger.parameters['minPrecio'] = {
+            in: 'query',
+            description: 'Filtro para productos que sean mayores a minPrecio',
+            required: false,
+            type: 'number'
+        }
+        #swagger.parameters['maxPrecio'] = {
+            in: 'query',
+            description: 'Filtro para productos que sean menores a maxPrecio',
+            required: false,
+            type: 'number'
+        }
         #swagger.responses = {
             200: {
                 description: 'Productos de Menu hallados satisfactoriamente.',

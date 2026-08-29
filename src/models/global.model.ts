@@ -27,3 +27,12 @@ FROM (
 ) subconsulta;`);
   tablasDB = result.rows[0].esquema;
 })();
+
+// Tipado para respuesta del endpoint en consultas query
+export interface PaginationResults<O> {
+  data: O[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPage: number;
+}

@@ -25,25 +25,7 @@ router.get("/", (req: Request, res: Response) => {
   /*  
     #swagger.tags = ['Cliente']
     #swagger.summary = 'Obtener y filtrar todos los Clientes'
-    #swagger.description = 'Retorna la lista de clientes permitiendo filtrar por nombre, email o telefono.'
-    #swagger.parameters['nombre'] = {
-            in: 'query',
-            description: 'Filtro por nombre del producto',
-            required: false,
-            type: 'string'
-        }
-        #swagger.parameters['email'] = {
-            in: 'query',
-            description: 'Filtro por email',
-            required: false,
-            type: 'string'
-        }
-        #swagger.parameters['telefono'] = {
-            in: 'query',
-            description: 'Filtro por alguna palabra de la descripcion',
-            required: false,
-            type: 'string'
-        }
+    #swagger.description = 'Retorna toda la lista de clientes con sus campos: nombre, email o telefono.'
     #swagger.responses = {
         200: {
             description: 'Clientes hallados satisfactoriamente.',

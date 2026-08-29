@@ -1,12 +1,18 @@
 import type { Request, Response } from "express";
 import errorHandlerUtil from "../utils/errorHandlerUtil.js";
-import { ProductoModel } from "../models/producto.model.js";
-import productoService from "../services/producto.service.js";
+import { PedidoModel } from "../models/pedido.model.js";
+import { ClienteModel } from "../models/cliente.model.js";
 
-export const getMenu = async (req: Request, res: Response) => {
+export const getPedidos = async (req: Request, res: Response) => {
   try {
-    const result = await productoService.getLibroFilter(req.query);
-    res.status(200).json(result);
+    const result = await PedidoModel.getAllPedidos();
+    if (result.length === 0) {
+      console.log("No hay pedidos disponibles, por el momento.");
+      return res
+        .status(404)
+        .json({ message: "No hay pedidos disponibles en al BD." });
+    }
+    res.status(200).json({ all: result.length, data: result });
   } catch (error) {
     if (error instanceof Error) {
       const esErrorQuery = errorHandlerUtil(error);
@@ -25,14 +31,12 @@ export const getMenu = async (req: Request, res: Response) => {
   }
 };
 
-export const getProduct = async (req: Request, res: Response) => {
+export const getPedidosId = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as any as number;
-    const result = await ProductoModel.getProductoById(id);
+    const result = await PedidoModel.getPedidoById(id);
     if (result === null) {
-      return res
-        .status(404)
-        .json({ error: "Producto no encontrado en la BD." });
+      return res.status(404).json({ error: "Pedido no encontrado en la BD." });
     }
     res.status(200).json({ "Busqueda exitosa": result });
   } catch (error) {
@@ -53,81 +57,115 @@ export const getProduct = async (req: Request, res: Response) => {
   }
 };
 
-export const createProduct = async (req: Request, res: Response) => {
-  try {
-    const result = await ProductoModel.insertProducto(req.body);
-    if (!result) {
-      console.log(`No se pudo registrar el nuevo menu.`);
-      return res
-        .status(404)
-        .json({ message: "No se pudo registrar el nuevo menu." });
-    }
-    res.status(201).json({ "Registro de nuevo menu, exitoso": result });
-  } catch (error) {
-    if (error instanceof Error) {
-      const esErrorQuery = errorHandlerUtil(error);
-      // Error en la consulta: dato, sintaxis, etc
-      if (esErrorQuery) {
-        return res.status(500).json({ error: "Error interno del Servidor" });
-      } else {
-        // Error de conexion a la base de datos
-        return res
-          .status(503)
-          .json({ error: "Servicio temporalmente no disponible" });
-      }
-    }
-    res.status(500).json({ error: "Error desconocido en el servidor" });
-    throw error;
-  }
-};
-
-export const updateProduct = async (req: Request, res: Response) => {
+export const getPedidosId_cliente = async (req: Request, res: Response) => {
   try {
     const id = req.params.id as any as number;
-    const result = await ProductoModel.updateProducto(id, req.body);
-    if (!result) {
-      return res
-        .status(404)
-        .json({ error: "Producto no encontrado en la BD." });
-    }
-    res.status(200).json({ "Producto actualizado, exitosamente": result });
-  } catch (error) {
-    if (error instanceof Error) {
-      const esErrorQuery = errorHandlerUtil(error);
-      // Error en la consulta: dato, sintaxis, etc
-      if (esErrorQuery) {
-        return res.status(500).json({ error: "Error interno del Servidor" });
-      } else {
-        // Error de conexion a la base de datos
-        return res
-          .status(503)
-          .json({ error: "Servicio temporalmente no disponible" });
-      }
-    }
-    res.status(500).json({ error: "Error desconocido en el servidor" });
-    throw error;
-  }
-};
-
-export const delProduct = async (req: Request, res: Response) => {
-  try {
-    const id = req.params.id as any as number;
-    const detallePedido_idProducto =
-      await ProductoModel.getAllDetallePedido_idProducto(id);
-    if (detallePedido_idProducto.length !== 0) {
-      console.log(
-        `Producto esta indexado con registros de "detalle_pedido" en la BD.`,
-      );
+    const result = await PedidoModel.getPedidoById_cliente(id);
+    if (result.length === 0) {
+      console.log("No hay pedidos para ese cliente, por el momento.");
       return res.status(404).json({
-        "No se puede eliminar,  hay registros en <detalle_pedido>":
-          detallePedido_idProducto,
+        message: "No hay pedidos disponibles para el cliente en al BD.",
       });
     }
-    const result = await ProductoModel.deleteProducto(id);
-    if (result === null) {
+    res.status(200).json({ all: result.length, data: result });
+  } catch (error) {
+    if (error instanceof Error) {
+      const esErrorQuery = errorHandlerUtil(error);
+      // Error en la consulta: dato, sintaxis, etc
+      if (esErrorQuery) {
+        return res.status(500).json({ error: "Error interno del Servidor" });
+      } else {
+        // Error de conexion a la base de datos
+        return res
+          .status(503)
+          .json({ error: "Servicio temporalmente no disponible" });
+      }
+    }
+    res.status(500).json({ error: "Error desconocido en el servidor" });
+    throw error;
+  }
+};
+
+export const createPedido = async (req: Request, res: Response) => {
+  try {
+    const id = Number(req.body.id_cliente);
+    const existeId_cliente = await ClienteModel.getClienteById(id);
+    if (!existeId_cliente) {
+      console.log(`id_cliente no existe en "cliente" de la BD.`);
+      return res.status(404).json({
+        error:
+          "No se puede crear el pedido, cliente no existe en  <cliente> de la BD",
+      });
+    }
+    const result = await PedidoModel.insertPedido(req.body);
+    if (!result) {
+      console.log(`No se pudo registrar el nuevo pedido.`);
       return res
         .status(404)
-        .json({ error: "Producto no encontrado en la BD." });
+        .json({ message: "No se pudo registrar el nuevo pedido." });
+    }
+    res.status(201).json({ "Registro de nuevo pedido, exitoso": result });
+  } catch (error) {
+    if (error instanceof Error) {
+      const esErrorQuery = errorHandlerUtil(error);
+      // Error en la consulta: dato, sintaxis, etc
+      if (esErrorQuery) {
+        return res.status(500).json({ error: "Error interno del Servidor" });
+      } else {
+        // Error de conexion a la base de datos
+        return res
+          .status(503)
+          .json({ error: "Servicio temporalmente no disponible" });
+      }
+    }
+    res.status(500).json({ error: "Error desconocido en el servidor" });
+    throw error;
+  }
+};
+
+export const updatePedidoId = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as any as number;
+    const result = await PedidoModel.updatePedido(id, req.body);
+    if (!result) {
+      return res.status(404).json({ error: "Pedido no encontrado en la BD." });
+    }
+    res.status(200).json({ "Pedido actualizado, exitosamente": result });
+  } catch (error) {
+    if (error instanceof Error) {
+      const esErrorQuery = errorHandlerUtil(error);
+      // Error en la consulta: dato, sintaxis, etc
+      if (esErrorQuery) {
+        return res.status(500).json({ error: "Error interno del Servidor" });
+      } else {
+        // Error de conexion a la base de datos
+        return res
+          .status(503)
+          .json({ error: "Servicio temporalmente no disponible" });
+      }
+    }
+    res.status(500).json({ error: "Error desconocido en el servidor" });
+    throw error;
+  }
+};
+
+export const delPedido = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id as any as number;
+    const detallePedido_idPPedido =
+      await PedidoModel.getAllDetallePedido_idPedido(id);
+    if (detallePedido_idPPedido.length !== 0) {
+      console.log(
+        `Pedido esta indexado con registros de "detalle_pedido" en la BD.`,
+      );
+      return res.status(404).json({
+        "No se puede eliminar, hay registros en <detalle_pedido>":
+          detallePedido_idPPedido,
+      });
+    }
+    const result = await PedidoModel.deletePedido(id);
+    if (result === null) {
+      return res.status(404).json({ error: "Pedido no encontrado en la BD." });
     }
     res.status(200).json({ "Eliminación exitosa": result });
   } catch (error) {
