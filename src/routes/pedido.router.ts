@@ -6,6 +6,7 @@ import {
   updatePedidoId,
   delPedido,
   getPedidosId_cliente,
+  createPedidoAndDetalles,
 } from "../controllers/pedido.controller.js";
 import type { Request, Response, NextFunction } from "express";
 import { validarErrorPath } from "../middlewares/validalar.middleware.js";
@@ -14,7 +15,11 @@ import {
   validateParamsSchema,
 } from "../middlewares/validateSchema.middleware.js";
 import idParamSchema from "../schemas/idParam.schema.js";
-import { pedidoBodySchema, pedidoPutSchema } from "../schemas/pedido.schema.js";
+import {
+  pedidoBodySchema,
+  pedidoPutSchema,
+  pedidoBodyDetallePedidos,
+} from "../schemas/pedido.schema.js";
 
 const router: Router = Router();
 
@@ -141,6 +146,56 @@ router.post(
     }
     */
     createPedido(req, res);
+  },
+);
+
+// Crear un nuevo Pedido
+router.post(
+  "/detallePedido",
+  validateBodySchema(pedidoBodyDetallePedidos),
+  (req: Request, res: Response) => {
+    /*
+    #swagger.tags = ['Pedido']
+    #swagger.summary = 'Crear un Pedido extendido con sus detalles'
+    #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'Datos para el nuevo Pedido y su lista de detalles.',
+        required: true,
+        schema: {
+            id_cliente: 57,
+            items: [
+                {
+                    id_producto: 5,
+                    cantidad: 2,
+                    precio_unid: 20
+                },            
+            ]
+        }
+    }
+    #swagger.responses = {
+        201: {
+            description: 'Registro de nuevo Pedido con detalles exitoso.',
+            schema: [
+                {
+                    id_detalle: 1,
+                    id_producto: 5,
+                    cantidad: 3,
+                    precio_unid: 15.50,
+                    id_pedido: 102
+                }
+            ]
+        },
+        400: {
+            description: 'Error de validación en los datos enviados.',
+            schema: { error: 'items debe ser una lista de detalle_pedido' }
+        },
+        500: {
+            description: 'Error interno del servidor o fallo en la transacción.',
+            schema: { error: 'Error en el registro de Pedido Extendido, se aplico ROLLBACK' }
+        }
+    }
+    */
+    createPedidoAndDetalles(req, res);
   },
 );
 

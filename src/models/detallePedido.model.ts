@@ -9,7 +9,7 @@ export interface DetallePedido {
 };
 
 
-export type DetallePedidoTypeCreate = Omit<DetallePedido, 'id'>;
+export type DetallePedidoTypeCreate = Omit<DetallePedido, 'id_dpedido'>;
 
 export type DetallePedidoTypeUpdate = Partial<DetallePedidoTypeCreate>;
 
